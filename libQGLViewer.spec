@@ -3,14 +3,13 @@
 
 %define realname QGLViewer
 
-%define libname %mklibname %{realname} %{major}_%{minor}
-%define libnamedev %mklibname %{realname} %{major}_%{minor} -d
+%define libname %mklibname %{realname} %{major}
+%define libnamedev %mklibname %{realname} -d
 
 
 Name:		libQGLViewer
 Version:	%{major}.%{minor}.6
-Release: %mkrel 1
-
+Release:	%mkrel 1
 Summary:	Qt based OpenGL generic 3D viewer library
 License:	GPL
 Group:		System/Libraries
@@ -31,6 +30,9 @@ with the mouse, keyFrame interpolator...
 Summary:        Qt based OpenGL generic 3D viewer library
 License:        GPL
 Group:          System/Libraries
+Provides:	lib%{realname} = %{version}-%{release}
+Obsoletes:	%mklibname %{realname} 1 3
+Obsoletes:	lib%{realname} < %{version}
 
 %description  -n %libname
 A versatile 3D viewer library for 3D application development.
@@ -41,7 +43,10 @@ with the mouse, keyFrame interpolator...
 %package -n %libnamedev
 Summary: The libQGLViewer header files, documentation and examples
 Group: System/Libraries
-Requires: %{libname} = %{version}
+Requires: %{libname} = %{version}-%{release}
+Provides: %{name}-devel = %{version}-%{release}
+Provides: %{realname}-devel = %{version}-%{release}
+Obsoletes: %mklibname -d %{realname} 1 3
 
 %description -n %libnamedev
 This package contains the header files for libQGLViewer.
@@ -50,62 +55,21 @@ libQGLViewer. A reference documentation and pedagogical
 examples are included. 
 
 %prep
-%define docdir %_docdir/QGLViewer
-%define includeDir %_includedir/QGLViewer
-%define libdir %_libdir
 %setup -q -n %{name}-%{version}-1
   
 %build
-cd QGLViewer
+cd %{realname}
 
 %{qt3dir}/bin/qmake
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__install} -d $RPM_BUILD_ROOT%{includeDir}
-%{__install} --mode=644 QGLViewer/*.h $RPM_BUILD_ROOT%{includeDir}
-%{__install} -d $RPM_BUILD_ROOT%{includeDir}/cwFiles
-%{__install} --mode=644 QGLViewer/*.cw $RPM_BUILD_ROOT%{includeDir}/cwFiles
-#%{__install} --mode=644 QGLViewer/*.png $RPM_BUILD_ROOT%{includeDir}/cwFiles
+cd %{realname}
+make install INSTALL_ROOT=%{buildroot}
 
-%{__install} -d $RPM_BUILD_ROOT%{libdir}
-%{__install} --mode=644 QGLViewer/libQGLViewer.so.%{version} $RPM_BUILD_ROOT%{libdir}
-ln -s libQGLViewer.so.%{version} $RPM_BUILD_ROOT%{libdir}/libQGLViewer.so.%{major}.%{minor}
-ln -s libQGLViewer.so.%{version} $RPM_BUILD_ROOT%{libdir}/libQGLViewer.so.%{major}
-ln -s libQGLViewer.so.%{version} $RPM_BUILD_ROOT%{libdir}/libQGLViewer.so
-
-# %{__install} -d $RPM_BUILD_ROOT%{_mandir}/man3
-%{__install} -d $RPM_BUILD_ROOT%{docdir}
-%{__install} -d $RPM_BUILD_ROOT%{docdir}/refManual
-%{__install} -d $RPM_BUILD_ROOT%{docdir}/images
-%{__install} -d $RPM_BUILD_ROOT%{docdir}/examples
-%{__install} -d $RPM_BUILD_ROOT%{docdir}/examples/contribs
-# %{__install} doc/man/man3/QGLViewer.3 $RPM_BUILD_ROOT%{_mandir}/man3/
-# %{__install} doc/man/man3/qglviewer_* $RPM_BUILD_ROOT%{_mandir}/man3/
-%{__install} --mode=644 doc/*.html doc/*.css $RPM_BUILD_ROOT%{docdir}
-%{__install} --mode=644 INSTALL README LICENCE CHANGELOG $RPM_BUILD_ROOT%{docdir}
-%{__install} --mode=644 doc/refManual/* $RPM_BUILD_ROOT%{docdir}/refManual
-%{__install} --mode=644 doc/images/* $RPM_BUILD_ROOT%{docdir}/images
-%{__install} --mode=644 doc/examples/*.html $RPM_BUILD_ROOT%{docdir}/examples
-%{__install} --mode=644 examples/examples.pro $RPM_BUILD_ROOT%{docdir}/examples
-%{__install} --mode=644 examples/contribs/contribs.pro $RPM_BUILD_ROOT%{docdir}/examples/contribs
-for dir in `ls examples`
-do
-if [[ -d examples/$dir ]] && [[ $dir != "contribs" ]]
-  then
-    %{__install} -d $RPM_BUILD_ROOT%{docdir}/examples/$dir
-    %{__install} --mode=644 examples/$dir/* $RPM_BUILD_ROOT%{docdir}/examples/$dir
-  fi
-done
-for dir in `ls examples/contribs`
-do
-if [[ -d examples/contribs/$dir ]]
-  then
-    %{__install} -d $RPM_BUILD_ROOT%{docdir}/examples/contribs/$dir
-    %{__install} --mode=644 examples/contribs/$dir/* $RPM_BUILD_ROOT%{docdir}/examples/contribs/$dir
-  fi
-done
+# fwang: remove unused files
+rm -f %{buildroot}%{_libdir}/*.prl
 
 %post -n %libname -p /sbin/ldconfig
 
@@ -116,32 +80,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n %libname
 %defattr(-,root,root)
-%{libdir}/*.so*
-
+%doc CHANGELOG LICENCE README
+%{_libdir}/*.so.*
 
 %files -n %libnamedev
 %defattr(-,root,root)
-%dir %{includeDir}
-%{includeDir}/*.h
-%dir %{includeDir}/cwFiles
-%{includeDir}/cwFiles/*.cw
-#%{includeDir}/cwFiles/*.png
+%dir %{_includedir}/%{realname}
+%{_includedir}/%{realname}
+%{_libdir}/*.so
 
-# %doc %{_mandir}/man3/QGLViewer.3.bz2
-# %doc %{_mandir}/man3/qglviewer_*
-
-%dir %{docdir}
-%doc %{docdir}/*.html
-%doc %{docdir}/*.css
-%doc %{docdir}/README
-%doc %{docdir}/LICENCE
-%doc %{docdir}/INSTALL
-%doc %{docdir}/CHANGELOG
-%dir %{docdir}/refManual
-%doc %{docdir}/refManual/*
-%dir %{docdir}/images
-%doc %{docdir}/images/*
-%dir %{docdir}/examples
-%doc %{docdir}/examples/*
-# %doc %{docdir}/examples/*.html
-# %doc %{docdir}/examples/*.pro
+%doc %{_docdir}/%{realname}
