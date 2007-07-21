@@ -53,33 +53,12 @@ examples are included.
 %define docdir %_docdir/QGLViewer
 %define includeDir %_includedir/QGLViewer
 %define libdir %_libdir
-%setup -n %{name}-%{version}-1
+%setup -q -n %{name}-%{version}-1
   
 %build
 cd QGLViewer
 
-if [[ -z "${QTDIR}" ]]
-then
-  if [[ -d %_libdir/qt3 ]]
-  then
-    export QTDIR=%_libdir/qt3
-  else
-    echo "Trying to autodetect QTDIR..."
-    autoDetect=`locate lib/libqt | head -1 | sed s:"/lib/libqt.*":"":`
-    if [[ -d $autoDetect ]] 
-    then
-      export QTDIR=$autoDetect
-    else
-      echo "Compilation error - QTDIR is undefined, unable to run qmake"
-      echo "Use export QTDIR=... ([ba]sh) or setenv QTDIR ... ([t]csh) and re-run"
-      exit 1
-    fi
-  fi
-fi
-
-export PATH=${PATH}:${QTDIR}/bin
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${QTDIR}/lib
-qmake
+%{qt3dir}/bin/qmake
 make
 
 %install
