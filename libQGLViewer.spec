@@ -1,5 +1,5 @@
-%define major 1
-%define minor 3
+%define major 2
+%define minor 2
 
 %define realname QGLViewer
 
@@ -8,13 +8,13 @@
 
 
 Name:		libQGLViewer
-Version:	%{major}.%{minor}.9
-Release: %mkrel 3
+Version:	%{major}.%{minor}.6
+Release: %mkrel 1
 
 Summary:	Qt based OpenGL generic 3D viewer library
 License:	GPL
 Group:		System/Libraries
-Source:		http://artis.imag.fr/Members/Gilles.Debunne/QGLViewer/src/%{name}-%{version}.tar.bz2
+Source:		http://artis.imag.fr/Members/Gilles.Debunne/QGLViewer/src/%{name}-%{version}-1.tar.gz
 URL:		http://artis.imag.fr/Members/Gilles.Debunne/QGLViewer
 Buildroot:      %{_tmppath}/%{name}-%{version}-buildroot
 
@@ -53,7 +53,7 @@ examples are included.
 %define docdir %_docdir/QGLViewer
 %define includeDir %_includedir/QGLViewer
 %define libdir %_libdir
-%setup
+%setup -n %{name}-%{version}-1
   
 %build
 cd QGLViewer
