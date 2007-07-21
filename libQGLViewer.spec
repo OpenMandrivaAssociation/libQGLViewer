@@ -60,7 +60,7 @@ examples are included.
 %build
 cd %{realname}
 
-%{qt3dir}/bin/qmake
+%{qt3dir}/bin/qmake LIB_DIR=%{_libdir}
 make
 
 %install
