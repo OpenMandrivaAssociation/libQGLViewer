@@ -15,6 +15,7 @@ License:	GPL
 Group:		System/Libraries
 Source:		http://artis.imag.fr/Members/Gilles.Debunne/QGLViewer/src/%{name}-%{version}-1.tar.gz
 URL:		http://artis.imag.fr/Members/Gilles.Debunne/QGLViewer
+Buildroot:      %{_tmppath}/%{name}-%{version}-buildroot
 
 BuildRequires: qt3-devel
 BuildRequires: MesaGLU-devel
