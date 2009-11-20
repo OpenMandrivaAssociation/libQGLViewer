@@ -1,5 +1,5 @@
 %define major 2
-%define minor 2
+%define minor 3
 
 %define realname QGLViewer
 
@@ -8,17 +8,16 @@
 
 
 Name:		libQGLViewer
-Version:	%{major}.%{minor}.6
-Release:	%mkrel 5
+Version:	%{major}.%{minor}.4
+Release:	%mkrel 1
 Summary:	Qt based OpenGL generic 3D viewer library
-License:	GPL
+License:	GPLv2 or GPLv3
 Group:		System/Libraries
-Source:		http://artis.imag.fr/Members/Gilles.Debunne/QGLViewer/src/%{name}-%{version}-1.tar.gz
-URL:		http://artis.imag.fr/Members/Gilles.Debunne/QGLViewer
+Source:		http://www.libqglviewer.com/src/%{name}-%{version}.tar.gz
+URL:		http://www.libqglviewer.com
 Buildroot:      %{_tmppath}/%{name}-%{version}-buildroot
 
-BuildRequires: qt3-devel
-BuildRequires: MesaGLU-devel
+BuildRequires: qt4-devel
 
 %description
 A versatile 3D viewer library for 3D application development.
@@ -28,7 +27,6 @@ with the mouse, keyFrame interpolator...
 
 %package -n %libname
 Summary:        Qt based OpenGL generic 3D viewer library
-License:        GPL
 Group:          System/Libraries
 Provides:	lib%{realname} = %{version}-%{release}
 Obsoletes:	%mklibname %{realname} 1 3
@@ -55,16 +53,15 @@ libQGLViewer. A reference documentation and pedagogical
 examples are included. 
 
 %prep
-%setup -q -n %{name}-%{version}-1
+%setup -q
   
 %build
 cd %{realname}
-
-%{qt3dir}/bin/qmake LIB_DIR=%{_libdir}
-make
+%qmake_qt4 LIB_DIR=%{_libdir}
+%make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 cd %{realname}
 make install INSTALL_ROOT=%{buildroot}
 
@@ -80,7 +77,7 @@ rm -f %{buildroot}%{_libdir}/*.prl
 %endif
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files -n %libname
 %defattr(-,root,root)
