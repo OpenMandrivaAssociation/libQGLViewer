@@ -8,8 +8,8 @@
 
 
 Name:		libQGLViewer
-Version:	%{major}.%{minor}.4
-Release:	%mkrel 2
+Version:	2.3.6
+Release:	%mkrel 1
 Summary:	Qt based OpenGL generic 3D viewer library
 License:	GPLv2 or GPLv3
 Group:		System/Libraries
